@@ -1,0 +1,28 @@
+name: myJavaRunner
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build with Gradle
+        run: ./gradlew build
+
+#  deploy:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Copy jar to deploy directory
+#        run: cp all-java/build/libs/all-java.jar /root  # 将 jar 包复制到指定目录
+#      - name: Start application
+#        run: nohup java -jar /root/myapp/all-java.jar &  # 在后台启动应用

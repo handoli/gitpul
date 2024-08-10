@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/all")
 public class AllController {
 
-    @GetMapping("/gitea")
+    @GetMapping("/github")
     public String gitea(){
         //时间
         String time = DateUtil.format(DateTime.now(), "yyyy-MM-dd hh:mm:ss");
