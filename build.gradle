@@ -1,0 +1,75 @@
+buildscript {
+    ext {
+        springBootVersion = '3.0.3'
+        lombokVersion = '1.18.24'
+        hutoolVersion = '5.8.11'
+    }
+    repositories {
+        mavenLocal()
+        maven { url('https://maven.aliyun.com/repository/public/') }
+        mavenCentral()
+    }
+    dependencies {
+        /**
+         * spring-boot-gradle-plugin插件包含了
+         *      org.springframework.boot插件
+         *      io.spring.dependency-management插件
+         */
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    group 'org.example'
+    version ''
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+    tasks.withType(JavaCompile){
+        options.encoding('UTF-8')
+    }
+    repositories {
+        mavenLocal()
+        maven { url('https://maven.aliyun.com/repository/public/') }
+        mavenCentral()
+    }
+}
+
+subprojects {
+    /** springboot插件，实现 打包 等操作 */
+    apply plugin: 'org.springframework.boot'
+    /** dependency-management插件实现多模块的依赖管理 */
+    apply plugin: 'io.spring.dependency-management'
+    /**
+     * dependencies 块中定义的依赖包可以在子模块中直接使用，不需要在子模块的build.gradle中声明
+     * 一般是所有项目都会用的依赖包在这里定义，例如：hutool
+     *
+     * 如果要引入的依赖在spring-boot-dependencies有声明，则这里不需要在写版本号，例如：lombok
+     */
+    dependencies {
+        /** hutool工具 */
+        implementation "cn.hutool:hutool-all:${hutoolVersion}"
+        /** lombok插件 */
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+    }
+
+    /**
+     * dependencyManagement 块中定义的依赖包（或mavenBom）需要在子模块的build.gradle中声明后才能使用
+     *
+     * 因为使用了spring-boot-gradle-plugin插件，
+     * dependency-management插件会自动配置spring-boot-dependencies中声明的所有依赖包
+     * 所以在dependencyManagement块中可以不用再对spring-boot-dependencies进行声明配置，默认就有了（但最好是写上）
+     * 因此可以直接在子模块的build.gradle中引用就可以使用了，例如：springboot-xxx等的依赖包在这里不必再定义
+     * 但未在spring-boot-dependencies中声明的依赖包必须要在dependencyManagement中声明，例如：hutool
+     *
+     * 注意：声明在dependencyManagement中的依赖包（或mavenBom）必须要指定版本号
+     */
+    dependencyManagement {
+        dependencies {
+            /** springboot的依赖管理，因为配置了spring-boot-gradle-plugin插件，所以也可以不写 */
+            dependency "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+        }
+    }
+}
+
