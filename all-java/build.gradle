@@ -1,0 +1,7 @@
+bootJar.enabled = true
+
+dependencies {
+    /** springboot web服务依赖 */
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
